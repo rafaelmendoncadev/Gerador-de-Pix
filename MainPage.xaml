@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Gerador_de_Pix.MainPage"
+             Title="Gerador de Pix">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,20" Spacing="16" MaximumWidthRequest="520" HorizontalOptions="Center">
+
+            <!-- Cabeçalho -->
+            <Label Text="Gerador de Pix"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+            <Label Text="Gere a chave Pix e envie pelo WhatsApp"
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray600},
+                                              Dark={StaticResource Gray400}}"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,8" />
+
+            <!-- Formulário -->
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                  ColumnDefinitions="*"
+                  RowSpacing="4">
+
+                <Label Grid.Row="0" Text="Nome do cliente" FontAttributes="Bold" />
+                <Entry x:Name="NomeEntry"
+                       Grid.Row="1"
+                       Placeholder="Ex.: João da Silva"
+                       ReturnType="Next" />
+
+                <Label Grid.Row="2" Text="WhatsApp" FontAttributes="Bold" Margin="0,8,0,0" />
+                <Entry x:Name="WhatsAppEntry"
+                       Grid.Row="3"
+                       Placeholder="(61) 99999-9999"
+                       Keyboard="Telephone"
+                       MaxLength="20"
+                       ReturnType="Next" />
+
+                <Label Grid.Row="4" Text="Descrição" FontAttributes="Bold" Margin="0,8,0,0" />
+                <Entry x:Name="DescricaoEntry"
+                       Grid.Row="5"
+                       Placeholder="Ex.: Recarga New One"
+                       ReturnType="Next" />
+
+                <Label Grid.Row="6" Text="Valor (R$)" FontAttributes="Bold" Margin="0,8,0,0" />
+                <Entry x:Name="ValorEntry"
+                       Grid.Row="7"
+                       Placeholder="0,00"
+                       Keyboard="Numeric"
+                       ReturnType="Done" />
+            </Grid>
+
+            <Button x:Name="GerarBtn"
+                    Text="Gerar Pix"
+                    Clicked="OnGerarClicked"
+                    HorizontalOptions="Fill"
+                    Margin="0,12,0,0"
+                    SemanticProperties.Hint="Gera o QR Code e a chave copia e cola" />
+
+            <!-- Área de resultado (oculta até gerar) -->
+            <Border x:Name="ResultadoBorder"
+                    IsVisible="False"
+                    Margin="0,16,0,0"
+                    Padding="16"
+                    StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                                     Dark={StaticResource Gray900}}"
+                    StrokeShape="RoundRectangle 16">
+                <VerticalStackLayout Spacing="12">
+
+                    <!-- QR Code -->
+                    <Image x:Name="QrCodeImage"
+                           HeightRequest="260"
+                           WidthRequest="260"
+                           Aspect="AspectFit"
+                           HorizontalOptions="Center"
+                           BackgroundColor="White"
+                           Margin="8" />
+
+                    <!-- Chave copia e cola -->
+                    <Label Text="Chave Pix (copia e cola)"
+                           FontAttributes="Bold"
+                           FontSize="13" />
+                    <Border StrokeThickness="1"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray300},
+                                                     Dark={StaticResource Gray600}}"
+                            StrokeShape="RoundRectangle 8"
+                            Padding="10">
+                        <Label x:Name="CopiaEColaLabel"
+                               FontSize="12"
+                               FontFamily="Courier New"
+                               LineBreakMode="CharacterWrap" />
+                    </Border>
+                    <Button x:Name="CopiarBtn"
+                            Text="📋 Copiar chave"
+                            Clicked="OnCopiarClicked"
+                            HorizontalOptions="Fill" />
+
+                    <!-- Botões de envio -->
+                    <Button x:Name="EnviarWhatsBtn"
+                            Text="💬 Enviar via WhatsApp"
+                            Clicked="OnEnviarWhatsClicked"
+                            BackgroundColor="#25D366"
+                            HorizontalOptions="Fill"
+                            Margin="0,8,0,0" />
+                    <Button x:Name="CompartilharQrBtn"
+                            Text="🖼️ Compartilhar QR Code"
+                            Clicked="OnCompartilharQrClicked"
+                            HorizontalOptions="Fill" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
