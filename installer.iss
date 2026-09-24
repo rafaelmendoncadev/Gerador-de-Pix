@@ -1,7 +1,7 @@
 ; Script Inno Setup 6 para Gerador Pix Desktop
 #define MyAppName "Gerador Pix"
-#define MyAppVersion "1.1.0"
-#define MyAppPublisher "Rafael Vieira de Mendonca"
+#define MyAppVersion "1.2.0"
+#define MyAppPublisher "TechZone Sistemas"
 #define MyAppExeName "GeradorPix.exe"
 
 [Setup]
@@ -36,9 +36,9 @@ Source: "dist\config.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "src\assets\*"; DestDir: "{app}\src\assets"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent

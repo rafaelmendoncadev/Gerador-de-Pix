@@ -6,15 +6,16 @@ Aplicativo Desktop moderno para Windows em Python com **CustomTkinter**, desenvo
 
 ## ✨ Recursos
 
-- 🔹 **Dados Pré-configurados:** Inicializa com os dados do recebedor (**Rafael Vieira de Mendonça**, Chave Pix **techzonesistemas@gmail.com**, **Brasília**).
-- 🔹 **Painel de Ajustes / Configurações:** Permite atualizar a chave, o nome ou a cidade a qualquer momento via interface gráfica ou no arquivo `config.json`.
+- 🔹 **Sistema 100% Customizável:** Qualquer usuário ou empresa pode cadastrar seus dados de recebedor (Nome/Razão Social, Chave Pix e Cidade) no primeiro acesso com fluxo guiado de onboarding.
+- 🔹 **Validação Inteligente de Chave:** Reconhece e valida automaticamente formatos de CPF, CNPJ, Celular com DDD, E-mail ou Chave Aleatória (EVP).
+- 🔹 **Painel de Configurações e Redefinição:** Permite alterar os dados cadastrados ou redefinir/zerar o cadastro com um clique a qualquer momento.
 - 🔹 **Máscara Monetária Inteligente:** Campo de valor que formata automaticamente no padrão brasileiro (`R$ 0,00`), além de botões rápidos para somar valores (`+ R$ 10`, `+ R$ 50`, `+ R$ 100`, etc.).
 - 🔹 **Identificador e Descrição:** Suporte opcional a identificador de pedido (TxID) e mensagem da cobrança para o pagador.
 - 🔹 **QR Code em Alta Resolução:** Renderização nítida na tela com leitura garantida por qualquer aplicativo bancário (Nubank, Itaú, Bradesco, Inter, Santander, BB, Caixa, etc.).
 - 🔹 **Pix Copia e Cola:** Botão dedicado com cópia direta para a área de transferência do Windows e confirmação visual.
 - 🔹 **Exportação de Imagem PNG:** Salva o QR Code diretamente em arquivo `.png` com seletor de pastas nativo.
 - 🔹 **Design Moderno e Alternador de Tema:** Suporte completo a Modo Escuro (Dark) e Modo Claro (Light) com detalhes na cor oficial do Pix (`#32BCAD`).
-- 🔹 **Executável Windows (.exe) Autocontido:** Pode ser distribuído como um único arquivo `.exe` sem requerer instalação prévia do Python.
+- 🔹 **Executável Windows (.exe) e Instalador:** Disponível tanto em executável único portátil quanto em instalador oficial Windows completo.
 
 ---
 
@@ -84,7 +85,7 @@ O executável final será gerado em `dist/GeradorPix.exe`.
 ```powershell
 python build_exe.py --installer
 ```
-O instalador completo com suporte a desinstalação e atalhos será gerado em `dist/GeradorPix_Setup_v1.1.0.exe`.
+O instalador completo com suporte a desinstalação e atalhos será gerado em `dist/GeradorPix_Setup_v1.2.0.exe`.
 
 ---
 

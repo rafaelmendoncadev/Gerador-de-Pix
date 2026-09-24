@@ -19,10 +19,24 @@ def find_iscc() -> str | None:
     return None
 
 
+def get_version(base_dir: str) -> str:
+    """Obtém a versão atual definida no pacote src."""
+    try:
+        init_file = os.path.join(base_dir, "src", "__init__.py")
+        with open(init_file, "r", encoding="utf-8") as f:
+            for line in f:
+                if "__version__" in line:
+                    return line.split("=")[1].strip().strip('"').strip("'")
+    except Exception:
+        pass
+    return "1.2.0"
+
+
 def build_installer(base_dir: str):
     """Compila o instalador oficial Windows via Inno Setup."""
     iscc_path = find_iscc()
     iss_file = os.path.join(base_dir, "installer.iss")
+    version = get_version(base_dir)
 
     if not iscc_path:
         print("\n[AVISO] Inno Setup (ISCC.exe) não encontrado no sistema.")
@@ -34,14 +48,14 @@ def build_installer(base_dir: str):
         return False
 
     print("\n==================================================")
-    print("Iniciando compilação do Instalador (Inno Setup)...")
+    print(f"Iniciando compilação do Instalador v{version} (Inno Setup)...")
     print("==================================================")
 
     cmd = [iscc_path, iss_file]
     result = subprocess.run(cmd, cwd=base_dir)
 
     if result.returncode == 0:
-        installer_path = os.path.join(base_dir, "dist", "GeradorPix_Setup_v1.1.0.exe")
+        installer_path = os.path.join(base_dir, "dist", f"GeradorPix_Setup_v{version}.exe")
         print("\n==================================================")
         print("INSTALADOR GERADO COM SUCESSO!")
         print(f"Instalador disponível em: {installer_path}")

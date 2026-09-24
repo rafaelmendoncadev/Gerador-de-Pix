@@ -12,7 +12,14 @@ from typing import Any, Dict, Optional
 import customtkinter as ctk
 from PIL import Image
 
-from src.config_manager import format_pix_key_display, load_config, save_config
+from src.config_manager import (
+    format_pix_key_display,
+    is_config_valid,
+    load_config,
+    reset_config,
+    save_config,
+    validate_pix_key_type,
+)
 from src.pix_engine import PixCharge
 
 
@@ -24,19 +31,32 @@ DARK_BG = "#11111B"
 DARK_CARD = "#181825"
 DARK_INPUT = "#1E1E2E"
 BORDER_COLOR = "#313244"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.2.0"
 
 
 class SettingsDialog(ctk.CTkToplevel):
-    """Janela modal para editar os dados do recebedor (Chave, Nome e Cidade)."""
+    """Janela modal para cadastrar/editar os dados do recebedor (Chave, Nome e Cidade)."""
 
     def __init__(self, parent: "PixApp", config: Dict[str, Any]):
         super().__init__(parent)
         self.parent = parent
         self.config = config
 
-        self.title("Configurações do Recebedor Pix")
-        self.geometry("520x460")
+        self.is_first_time = not is_config_valid(config)
+
+        if self.is_first_time:
+            self.title("Bem-vindo ao Gerador Pix - Cadastro Inicial")
+            title_text = "Cadastro do Recebedor Pix"
+            subtitle_text = "Informe seus dados para começar a gerar cobranças com QR Code."
+            save_btn_text = "✨ Salvar e Começar"
+        else:
+            self.title("Configurações do Recebedor Pix")
+            title_text = "Configurar Dados do Recebedor"
+            subtitle_text = "Esses dados são utilizados para gerar o QR Code e o Copia e Cola."
+            save_btn_text = "💾 Salvar Alterações"
+
+        dialog_height = 520 if not self.is_first_time else 460
+        self.geometry(f"540x{dialog_height}")
         self.resizable(False, False)
         self.grab_set()  # Modal
 
@@ -45,33 +65,33 @@ class SettingsDialog(ctk.CTkToplevel):
         # Título
         title_label = ctk.CTkLabel(
             self,
-            text="Configurar Dados do Recebedor",
+            text=title_text,
             font=ctk.CTkFont(size=20, weight="bold"),
         )
         title_label.pack(pady=(20, 5))
 
         subtitle_label = ctk.CTkLabel(
             self,
-            text="Esses dados serão utilizados para gerar o QR Code e o Copia e Cola.",
+            text=subtitle_text,
             font=ctk.CTkFont(size=13),
             text_color=("gray50", "gray70"),
         )
-        subtitle_label.pack(pady=(0, 20))
+        subtitle_label.pack(pady=(0, 15))
 
         # Formulário
         form_frame = ctk.CTkFrame(self, fg_color=("#FFFFFF", DARK_CARD), corner_radius=12)
-        form_frame.pack(fill="both", expand=True, padx=25, pady=(0, 20))
+        form_frame.pack(fill="both", expand=True, padx=25, pady=(0, 15))
 
         # Nome
         ctk.CTkLabel(
             form_frame,
-            text="Nome do Beneficiário (até 25 caracteres):",
+            text="Nome Completo ou Razão Social (até 25 caracteres):",
             font=ctk.CTkFont(weight="bold", size=13),
         ).pack(anchor="w", padx=20, pady=(15, 4))
         self.name_entry = ctk.CTkEntry(
             form_frame,
             height=38,
-            placeholder_text="Nome completo",
+            placeholder_text="Ex: João da Silva ou Minha Loja LTDA",
             fg_color=("#F8FAFC", DARK_INPUT),
         )
         self.name_entry.insert(0, config.get("beneficiary_name", ""))
@@ -80,13 +100,13 @@ class SettingsDialog(ctk.CTkToplevel):
         # Chave Pix
         ctk.CTkLabel(
             form_frame,
-            text="Chave Pix (CPF, CNPJ, E-mail, Telefone ou Aleatória):",
+            text="Chave Pix (CPF, CNPJ, Celular com DDD, E-mail ou Aleatória):",
             font=ctk.CTkFont(weight="bold", size=13),
         ).pack(anchor="w", padx=20, pady=(5, 4))
         self.key_entry = ctk.CTkEntry(
             form_frame,
             height=38,
-            placeholder_text="Digite sua chave Pix",
+            placeholder_text="Ex: 123.456.789-00, loja@email.com, 11999998888...",
             fg_color=("#F8FAFC", DARK_INPUT),
         )
         self.key_entry.insert(0, config.get("pix_key", ""))
@@ -95,36 +115,37 @@ class SettingsDialog(ctk.CTkToplevel):
         # Cidade
         ctk.CTkLabel(
             form_frame,
-            text="Cidade do Beneficiário (até 15 caracteres):",
+            text="Cidade do Recebedor (até 15 caracteres):",
             font=ctk.CTkFont(weight="bold", size=13),
         ).pack(anchor="w", padx=20, pady=(5, 4))
         self.city_entry = ctk.CTkEntry(
             form_frame,
             height=38,
-            placeholder_text="Ex: Brasília",
+            placeholder_text="Ex: São Paulo, Rio de Janeiro, Curitiba...",
             fg_color=("#F8FAFC", DARK_INPUT),
         )
         self.city_entry.insert(0, config.get("city", ""))
         self.city_entry.pack(fill="x", padx=20, pady=(0, 15))
 
-        # Botões
+        # Botões principais
         btn_frame = ctk.CTkFrame(self, fg_color="transparent")
-        btn_frame.pack(fill="x", padx=25, pady=(0, 20))
+        btn_frame.pack(fill="x", padx=25, pady=(0, 10))
 
-        cancel_btn = ctk.CTkButton(
-            btn_frame,
-            text="Cancelar",
-            fg_color=("gray75", "gray30"),
-            hover_color=("gray65", "gray40"),
-            text_color=("#1E293B", "#FFFFFF"),
-            height=38,
-            command=self.destroy,
-        )
-        cancel_btn.pack(side="left", fill="x", expand=True, padx=(0, 10))
+        if not self.is_first_time:
+            cancel_btn = ctk.CTkButton(
+                btn_frame,
+                text="Cancelar",
+                fg_color=("gray75", "gray30"),
+                hover_color=("gray65", "gray40"),
+                text_color=("#1E293B", "#FFFFFF"),
+                height=38,
+                command=self.destroy,
+            )
+            cancel_btn.pack(side="left", fill="x", expand=True, padx=(0, 10))
 
         save_btn = ctk.CTkButton(
             btn_frame,
-            text="Salvar Alterações",
+            text=save_btn_text,
             fg_color=PIX_TEAL,
             hover_color=PIX_TEAL_HOVER,
             text_color="#FFFFFF",
@@ -132,15 +153,60 @@ class SettingsDialog(ctk.CTkToplevel):
             height=38,
             command=self.save_settings,
         )
-        save_btn.pack(side="right", fill="x", expand=True, padx=(10, 0))
+        save_btn.pack(
+            side="right" if not self.is_first_time else "left",
+            fill="x",
+            expand=True,
+            padx=(10 if not self.is_first_time else 0, 0),
+        )
+
+        # Botão de redefinição / limpeza (apenas se já houver dados cadastrados)
+        if not self.is_first_time:
+            reset_btn = ctk.CTkButton(
+                self,
+                text="🗑️ Limpar / Redefinir Cadastro",
+                fg_color="#DC2626",
+                hover_color="#B91C1C",
+                text_color="#FFFFFF",
+                font=ctk.CTkFont(size=12, weight="bold"),
+                height=32,
+                command=self.confirm_reset,
+            )
+            reset_btn.pack(padx=25, pady=(0, 15))
+
+    def confirm_reset(self):
+        if messagebox.askyesno(
+            "Confirmar Limpeza",
+            "Deseja realmente apagar todos os dados cadastrados?\n\nO sistema voltará ao estado inicial em branco.",
+            icon="warning",
+        ):
+            self.config.clear()
+            self.config.update(reset_config())
+            self.parent.config_data = self.config.copy()
+            self.parent.update_beneficiary_display()
+            self.destroy()
+            messagebox.showinfo("Cadastro Limpo", "Todos os dados foram redefinidos com sucesso!")
+            self.parent.open_settings()
 
     def save_settings(self):
         new_name = self.name_entry.get().strip()
         new_key = self.key_entry.get().strip()
         new_city = self.city_entry.get().strip()
 
-        if not new_name or not new_key or not new_city:
-            messagebox.showwarning("Campos Obrigatórios", "Por favor, preencha todos os campos do recebedor.")
+        if len(new_name) < 2:
+            messagebox.showwarning("Atenção", "Por favor, informe o Nome Completo ou Razão Social do recebedor.")
+            self.name_entry.focus()
+            return
+
+        is_valid, key_type, err_msg = validate_pix_key_type(new_key)
+        if not is_valid:
+            messagebox.showwarning("Chave Pix Inválida", err_msg)
+            self.key_entry.focus()
+            return
+
+        if len(new_city) < 2:
+            messagebox.showwarning("Atenção", "Por favor, informe a Cidade do recebedor.")
+            self.city_entry.focus()
             return
 
         self.config["beneficiary_name"] = new_name
@@ -148,9 +214,13 @@ class SettingsDialog(ctk.CTkToplevel):
         self.config["city"] = new_city
 
         save_config(self.config)
+        self.parent.config_data = self.config.copy()
         self.parent.update_beneficiary_display()
         self.destroy()
-        messagebox.showinfo("Sucesso", "Configurações salvas com sucesso!")
+        messagebox.showinfo(
+            "Sucesso",
+            f"Cadastro salvo com sucesso!\n\nRecebedor: {new_name}\nTipo de Chave: {key_type}\nCidade: {new_city}",
+        )
 
 
 class PixApp(ctk.CTk):
@@ -193,6 +263,10 @@ class PixApp(ctk.CTk):
 
         self._build_ui()
         self.update_beneficiary_display()
+
+        # Onboarding: se for primeiro acesso ou dados incompletos, abre o cadastro automaticamente
+        if not is_config_valid(self.config_data):
+            self.after(300, self.open_settings)
 
     def _build_ui(self):
         self.configure(fg_color=("#F1F5F9", DARK_BG))
@@ -603,15 +677,20 @@ class PixApp(ctk.CTk):
     # Ações do Beneficiário
     # -----------------------------
     def update_beneficiary_display(self):
-        name = self.config_data.get("beneficiary_name", "Rafael Vieira de Mendonça")
-        key = self.config_data.get("pix_key", "techzonesistemas@gmail.com")
-        city = self.config_data.get("city", "Brasília")
-
-        formatted_key = format_pix_key_display(key)
-        self.ben_name_label.configure(text=f"Recebedor: {name}")
-        self.ben_details_label.configure(
-            text=f"Chave Pix: {formatted_key}  •  Cidade: {city}"
-        )
+        if is_config_valid(self.config_data):
+            name = str(self.config_data.get("beneficiary_name", "")).strip()
+            key = str(self.config_data.get("pix_key", "")).strip()
+            city = str(self.config_data.get("city", "")).strip()
+            formatted_key = format_pix_key_display(key)
+            self.ben_name_label.configure(text=f"Recebedor: {name}")
+            self.ben_details_label.configure(
+                text=f"Chave Pix: {formatted_key}  •  Cidade: {city}"
+            )
+        else:
+            self.ben_name_label.configure(text="Recebedor: Nenhum recebedor cadastrado")
+            self.ben_details_label.configure(
+                text="Clique no botão ⚙️ ao lado para cadastrar seus dados"
+            )
 
     def open_settings(self):
         SettingsDialog(self, self.config_data)
@@ -627,14 +706,22 @@ class PixApp(ctk.CTk):
     # Geração do Pix
     # -----------------------------
     def generate_pix(self):
+        if not is_config_valid(self.config_data):
+            messagebox.showwarning(
+                "Cadastro Obrigatório",
+                "Antes de gerar cobranças Pix, é necessário cadastrar os dados do recebedor.\n\nA tela de cadastro será aberta agora.",
+            )
+            self.open_settings()
+            return
+
         amount_reais = self.cents_value / 100.0
 
         txid = self.txid_entry.get().strip() or None
         description = self.desc_entry.get().strip() or None
 
-        name = self.config_data.get("beneficiary_name", "Rafael Vieira de Mendonça")
-        key = self.config_data.get("pix_key", "techzonesistemas@gmail.com")
-        city = self.config_data.get("city", "Brasília")
+        name = str(self.config_data.get("beneficiary_name", "")).strip()
+        key = str(self.config_data.get("pix_key", "")).strip()
+        city = str(self.config_data.get("city", "")).strip()
 
         charge = PixCharge(
             pix_key=key,
