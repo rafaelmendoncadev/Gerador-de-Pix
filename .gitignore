@@ -32,3 +32,16 @@ ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 .DS_Store
+
+# Android build & local files
+.gradle/
+android/.gradle/
+android/local.properties
+android/**/build/
+android/app/build/
+android/*.iml
+android/**/*.iml
+android/.idea/
+*.apk
+*.aab
+

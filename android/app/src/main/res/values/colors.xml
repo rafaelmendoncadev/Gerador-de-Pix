@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pix_teal">#32BCAD</color>
+    <color name="pix_teal_dark">#24A395</color>
+    <color name="pix_dark_bg">#11111B</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+</resources>

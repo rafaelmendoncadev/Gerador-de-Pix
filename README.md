@@ -1,6 +1,8 @@
-# Gerador de Pix Desktop com QR Code 🚀
+# Gerador de Pix Multiplataforma (Windows Desktop & Android Nativo) 🚀
 
-Aplicativo Desktop moderno para Windows em Python com **CustomTkinter**, desenvolvido especialmente para gerar cobranças Pix rápidas no padrão oficial do **Banco Central do Brasil (BACEN / EMV-Co)**.
+Solução completa e moderna para gerar cobranças Pix rápidas no padrão oficial do **Banco Central do Brasil (BACEN / EMV-Co)**:
+- 💻 **Versão Desktop (Windows):** Python + CustomTkinter + PyInstaller + Instalador Inno Setup.
+- 📱 **Versão Mobile (Android):** 100% Nativo em **Kotlin + Jetpack Compose (Material 3)** + Compartilhamento direto no WhatsApp.
 
 ---
 
@@ -9,13 +11,12 @@ Aplicativo Desktop moderno para Windows em Python com **CustomTkinter**, desenvo
 - 🔹 **Sistema 100% Customizável:** Qualquer usuário ou empresa pode cadastrar seus dados de recebedor (Nome/Razão Social, Chave Pix e Cidade) no primeiro acesso com fluxo guiado de onboarding.
 - 🔹 **Validação Inteligente de Chave:** Reconhece e valida automaticamente formatos de CPF, CNPJ, Celular com DDD, E-mail ou Chave Aleatória (EVP).
 - 🔹 **Painel de Configurações e Redefinição:** Permite alterar os dados cadastrados ou redefinir/zerar o cadastro com um clique a qualquer momento.
-- 🔹 **Máscara Monetária Inteligente:** Campo de valor que formata automaticamente no padrão brasileiro (`R$ 0,00`), além de botões rápidos para somar valores (`+ R$ 10`, `+ R$ 50`, `+ R$ 100`, etc.).
-- 🔹 **Identificador e Descrição:** Suporte opcional a identificador de pedido (TxID) e mensagem da cobrança para o pagador.
+- 🔹 **Máscara Monetária Inteligente:** Campo de valor que formata automaticamente no padrão brasileiro (`R$ 0,00`), além de botões rápidos para somar valores (`+ R$ 10`, `+ R$ 20`, `+ R$ 50`, `+ R$ 100`, etc.).
+- 🔹 **Compartilhamento Direto no Android:** Envio nativo do Copia e Cola formatado ou da imagem do QR Code diretamente para o **WhatsApp**, Telegram e outros aplicativos via Intent.
 - 🔹 **QR Code em Alta Resolução:** Renderização nítida na tela com leitura garantida por qualquer aplicativo bancário (Nubank, Itaú, Bradesco, Inter, Santander, BB, Caixa, etc.).
-- 🔹 **Pix Copia e Cola:** Botão dedicado com cópia direta para a área de transferência do Windows e confirmação visual.
-- 🔹 **Exportação de Imagem PNG:** Salva o QR Code diretamente em arquivo `.png` com seletor de pastas nativo.
+- 🔹 **Pix Copia e Cola:** Botão dedicado com cópia direta para a área de transferência com confirmação visual e feedback háptico.
 - 🔹 **Design Moderno e Alternador de Tema:** Suporte completo a Modo Escuro (Dark) e Modo Claro (Light) com detalhes na cor oficial do Pix (`#32BCAD`).
-- 🔹 **Executável Windows (.exe) e Instalador:** Disponível tanto em executável único portátil quanto em instalador oficial Windows completo.
+- 🔹 **Distribuição Completa:** Executável portátil (`.exe`), instalador Windows (`Setup.exe`) e pacote de instalação Android (`.apk`).
 
 ---
 
@@ -87,12 +88,25 @@ python build_exe.py --installer
 ```
 O instalador completo com suporte a desinstalação e atalhos será gerado em `dist/GeradorPix_Setup_v1.2.0.exe`.
 
+### 3. Compilar o Aplicativo Android (.apk)
+- Dê um duplo clique em `compilar_apk.bat` **OU**
+- Execute no terminal:
+```powershell
+cd android
+.\gradlew assembleDebug
+```
+O pacote de instalação para celular será gerado em:
+```
+dist/GeradorPix.apk
+```
+
 ---
 
 ## 🧪 Testes Automatizados
 
-Para rodar a suíte de testes de validação do motor Pix e CRC16:
+Para rodar a suíte de testes de validação do motor Pix e CRC16 (Python):
 ```powershell
 .\.venv\Scripts\pytest
 ```
+
 
